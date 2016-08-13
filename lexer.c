@@ -29,14 +29,6 @@ typedef struct {
   int code;
 } token_t;
 
-token_t new_token(char text[ID_MAX], int type, int code) {
-  token_t t;
-  strcpy(t.text, text);
-  t.type = type;
-  t.code = code;
-  return t;
-}
-
 typedef struct __token_node_t {
   token_t t;
   struct __token_node_t *next;
@@ -59,9 +51,17 @@ void token_list_print(token_node_t *ptn, FILE *fout) {
     return;
   token_t *pt = &(ptn->t);
   fprintf(fout, "<`%s`,%d> ", pt->text, pt->type);
-  // fprintf(fout, "%s ", pt->text);
   token_list_print(ptn->next, fout);
 }
+
+token_t new_token(char text[ID_MAX], int type, int code) {
+  token_t t;
+  strcpy(t.text, text);
+  t.type = type;
+  t.code = code;
+  return t;
+}
+
 int is_letter(char c) {
   return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
 }
@@ -79,7 +79,7 @@ int is_id(char c, FILE *fi, token_list_t *tkl) {
   }
   ungetc(c, fi);
   if (is_letter(c) || c == '_' || is_digital(c)) {
-    printf("id's length exceede %d: %s\n", ID_MAX, name);
+    printf("id's length is too long > %d\n", ID_MAX);
     exit(0);
   }
   name[i] = '\0';
